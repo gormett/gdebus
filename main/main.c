@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "display.h"
 #include "esp_event.h"
 #include "esp_log.h"
@@ -11,11 +9,13 @@
 #include "wifi.h"
 #include "time.h"
 #include "sntp_sync.h"
+#include "bus_api.h"
+#include "esp_crt_bundle.h"  // Add this line
 
 void app_main(void* ignore) {
-    static const char* TAG = "wifi station";
+    static const char* TAG = "Main";
     u8g2_t u8g2;
-    init_display(&u8g2);
+
 
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
@@ -29,6 +29,8 @@ void app_main(void* ignore) {
     wifi_init_sta();
 
     // Initialize SNTP
+    // CET timezone, M3.5.0 = last sunday in March, M10.5.0 = last sunday in October 
+    // More examples: https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html
     initialize_sntp("CET-1CEST,M3.5.0,M10.5.0/3");
 
     // Wait for time to be set
@@ -42,12 +44,17 @@ void app_main(void* ignore) {
         time(&now);
         localtime_r(&now, &timeinfo);
     }
+    init_display(&u8g2);
+
+    // Make the API request
+    const char* response = get_bus_departures();
+    ESP_LOGI(TAG, "API Response: %s", response);
 
     while (true) {
         time_t currentTime;
         time(&currentTime);
         
         draw_display(&u8g2, "", "", "", currentTime);
-        vTaskDelay(pdMS_TO_TICKS(1000));  // Update every second
+        vTaskDelay(pdMS_TO_TICKS(100));  // Update every 1/10 second
     }
 }

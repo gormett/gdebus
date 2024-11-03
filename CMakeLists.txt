@@ -8,4 +8,3 @@ include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(main)
 
 set(EXTRA_COMPONENT_DIRS components)
-set(EXTRA_COMPONENT_DIRS ${EXTRA_COMPONENT_DIRS} "components/smtp_client")
