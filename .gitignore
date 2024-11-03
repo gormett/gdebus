@@ -1,0 +1,18 @@
+.devcontainer
+.vscode
+
+CMakeFiles/
+Makefile
+CMakeCache.txt
+
+# components
+# components/
+# components/*
+
+build/
+out/
+
+*.o
+*.obj
+main/wifi_config.h
+components/wifi/include/wifi_config.h
