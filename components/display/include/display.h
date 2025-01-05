@@ -7,6 +7,7 @@
 
 #define PIN_SDA 21  // GPIO21
 #define PIN_SCL 22  // GPIO22
+#define RST_PIN 16  // GPIO16
 #define I2C_ADDRESS 0x78
 
 void init_display(u8g2_t *u8g2);

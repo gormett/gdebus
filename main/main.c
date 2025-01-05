@@ -12,7 +12,9 @@
 #include "bus_api.h"
 #include "esp_crt_bundle.h"  // Add this line
 
-void app_main(void* ignore) {
+#define MAIN_TASK_STACK_SIZE (8192)
+
+void main_task(void* ignore) {
     static const char* TAG = "Main";
     u8g2_t u8g2;
 
@@ -45,7 +47,7 @@ void app_main(void* ignore) {
         time(&now);
         localtime_r(&now, &timeinfo);
     }
-    init_display(&u8g2);
+    // init_display(&u8g2);
 
     // Make the API request
     const char* response = get_bus_departures();
@@ -55,7 +57,18 @@ void app_main(void* ignore) {
         time_t currentTime;
         time(&currentTime);
         
-        draw_display(&u8g2, "Domov", currentTime, "1", currentTime);
+        draw_display(&u8g2, "Domov", "11:22", "1", currentTime);
         vTaskDelay(pdMS_TO_TICKS(100));  // Update every 1/10 second
     }
+}
+
+void app_main(void* ignore) {
+    xTaskCreate(
+        main_task,
+        "main_task",
+        MAIN_TASK_STACK_SIZE,  // Increased stack size
+        NULL,
+        5,
+        NULL
+    );
 }

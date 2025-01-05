@@ -42,3 +42,10 @@ dependencies:
   # # with relative or absolute path
   # some_local_component:
   #   path: ../../projects/component
+
+bus_api:
+  path: components/bus_api
+u8g2:
+  path: components/u8g2
+u8g2-hal-esp-idf:
+  path: components/u8g2-hal-esp-idf
