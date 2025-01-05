@@ -1,10 +1,14 @@
 dependencies:
+  espressif/jsmn: "^1.1.0"
   # Required IDF version
   idf: ">=4.1"
 
   # Defining a dependency from the registry:
   # https://components.espressif.com/component/example/cmp
   # example/cmp: "^3.3.3"
+
+  # https://components.espressif.com/components/espressif/jsmn
+  # espressif/jsmn: "^1.1.0"
 
   # # Other ways to define dependencies
   #

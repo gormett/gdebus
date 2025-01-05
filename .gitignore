@@ -17,3 +17,4 @@ out/
 main/wifi_config.h
 components/wifi/include/wifi_config.h
 components/bus_api/include/bus_api_config.h
+documentation

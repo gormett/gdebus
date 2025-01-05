@@ -39,7 +39,8 @@ void app_main(void* ignore) {
     int retry = 0;
     const int retry_count = 10;
     while (timeinfo.tm_year < (2016 - 1900) && ++retry < retry_count) {
-        ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
+        ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", 
+        retry, retry_count);
         vTaskDelay(2000 / portTICK_PERIOD_MS);
         time(&now);
         localtime_r(&now, &timeinfo);
@@ -54,7 +55,7 @@ void app_main(void* ignore) {
         time_t currentTime;
         time(&currentTime);
         
-        draw_display(&u8g2, "", "", "", currentTime);
+        draw_display(&u8g2, "Domov", currentTime, "1", currentTime);
         vTaskDelay(pdMS_TO_TICKS(100));  // Update every 1/10 second
     }
 }

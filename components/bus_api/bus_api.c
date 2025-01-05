@@ -5,11 +5,13 @@
 
 #include "bus_api_config.h"
 #include "cJSON.h"
+#include "jsmn.h"
 #include "esp_http_client.h"
 #include "esp_log.h"
 #include "esp_tls.h"
 
 static const char* TAG = "bus_api";
+static char response_buffer[1024];  // Buffer to store the response
 
 esp_err_t _http_event_handle(esp_http_client_event_t *evt)
 {
@@ -30,9 +32,26 @@ esp_err_t _http_event_handle(esp_http_client_event_t *evt)
         case HTTP_EVENT_ON_DATA:
             ESP_LOGI(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
             if (!esp_http_client_is_chunked_response(evt->client)) {
-                printf("%.*s\n", evt->data_len, (char*)evt->data);
-            }
+                strncat(response_buffer, (char*)evt->data, evt->data_len);
 
+                // Print the data
+
+                // Parse the response
+                // cJSON *root = cJSON_Parse(response_buffer);
+                // if (root == NULL) {
+                    // ESP_LOGE(TAG, "Error parsing JSON");
+                    // break;
+                // }else {
+                    
+                // }
+
+                // cJSON *plannedDepartures = cJSON_GetObjectItem(root, 
+                // "PlannedDepartures");
+                // if (plannedDepartures != NULL) {
+                    // cJSON *plannedDepartureTime = cJSON_GetObjectItem(plannedDepartures,
+                    // "PlannedDepartureTime");
+                // }
+            }
             break;
         case HTTP_EVENT_ON_FINISH:
             ESP_LOGI(TAG, "HTTP_EVENT_ON_FINISH");
@@ -64,7 +83,7 @@ static const char* get_current_time(void) {
 }
 
 
-const char* get_bus_departures(void) {
+char* get_bus_departures(void) {
 
     esp_http_client_config_t config = {
     .url = API_URL,
@@ -72,7 +91,7 @@ const char* get_bus_departures(void) {
     .event_handler = _http_event_handle,
     };
 
-    const char *post_data[256];
+    char post_data[256];
     snprintf(post_data, sizeof(post_data),
              "{\"stopID\":%d,"
              "\"platformNumber\":%d,"
@@ -85,21 +104,25 @@ const char* get_bus_departures(void) {
              MAX_MINUTES,
              MAX_DEPARTURES);
 
-    // const char *post_data = "{\"stopID\":17039,\"platformNumber\":2,\"fromDateTime\":\"2024-11-04T19:50:44.9859776+02:00\",\"maxMinutes\":290,\"maxDepartures\":1}";
-
     esp_http_client_handle_t client = esp_http_client_init(&config);
     esp_http_client_set_header(client, "Content-Type", "application/json");
     esp_http_client_set_header(client, "X-API-Key", API_KEY);
     esp_http_client_set_method(client, HTTP_METHOD_POST);
     esp_http_client_set_post_field(client, post_data, strlen(post_data));
 
+    memset(response_buffer, 0, sizeof(response_buffer));  // Clear the buffer
+
     esp_err_t err = esp_http_client_perform(client);
 
     if (err == ESP_OK) {
-    ESP_LOGI(TAG, "Status = %d, content_length = %lld",
-            esp_http_client_get_status_code(client),
-            esp_http_client_get_content_length(client));
+        ESP_LOGI(TAG, "Status = %d, content_length = %lld",
+                 esp_http_client_get_status_code(client),
+                 esp_http_client_get_content_length(client));
+        printf("Response: %s\n", response_buffer);
+    } else {
+        ESP_LOGE(TAG, "HTTP request failed: %s", esp_err_to_name(err));
     }
+
     esp_http_client_cleanup(client);
-    return "Hello";
+    return strdup(response_buffer);  // Return a copy of the response
 }
