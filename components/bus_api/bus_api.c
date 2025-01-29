@@ -79,13 +79,6 @@ static const char *get_current_time(void) {
     return datetime;
 }
 
-// Helper function to extract token content
-static void print_token_value(const char *json, jsmntok_t *token) {
-    if (token->type == JSMN_STRING || token->type == JSMN_PRIMITIVE) {
-        printf("%.*s", token->end - token->start, json + token->start);
-    }
-}
-
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
     if (tok->type == JSMN_STRING &&
         (int)strlen(s) == tok->end - tok->start &&
@@ -93,29 +86,6 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
         return 0;
     }
     return -1;
-}
-
-static void print_token(const char *json, jsmntok_t *token) {
-    int len = token->end - token->start;
-    if (len > 0) {
-        ESP_LOGI(TAG, "%.*s", len, json + token->start);
-    }
-}
-
-static int is_primitive(const char *json, jsmntok_t *token) {
-    if (token->type != JSMN_PRIMITIVE) return 0;
-    char c = json[token->start];
-    return (c == 'n' || c == 't' || 'f' || c == '-' || (c >= '0' && c <= '9'));
-}
-
-static void print_value(const char *json, jsmntok_t *token) {
-    if (!json || !token || token->start < 0 || token->end < token->start) {
-        return;
-    }
-    int len = token->end - token->start;
-    if (len > 0 && len < MAX_RESPONSE_SIZE) {
-        ESP_LOGI(TAG, "%.*s", len, json + token->start);
-    }
 }
 
 // Add this helper function before parse_json_response
