@@ -193,7 +193,7 @@ static int parse_json_response(const char *json_string) {
     return token_count;
 }
 
-departure_info_t *get_bus_departures(void) {
+departure_info_t* get_bus_departures(void) {
     // Reset response buffer index
     response_idx = 0;
     memset(response_buffer, 0, MAX_RESPONSE_SIZE);

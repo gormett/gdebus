@@ -31,20 +31,18 @@ void initialize_sntp(const char* timezone) {
     ESP_LOGI(TAG, "Timezone: %s", timezone);
     tzset();
 
-        int retry = 0;
-    const int retry_count = 15;
-    while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
-        ESP_LOGI(TAG, "Waiting for SNTP sync... (%d/%d)", retry, retry_count);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-    }
+    //     int retry = 0;
+    // const int retry_count = 15;
+    // while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
+    //     ESP_LOGI(TAG, "Waiting for SNTP sync... (%d/%d)", retry, retry_count);
+    //     vTaskDelay(2000 / portTICK_PERIOD_MS);
+    // }
 
-    if (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED) {
-        ESP_LOGW(TAG, "SNTP sync failed after %d retries", retry_count);
-    } else {
-        ESP_LOGI(TAG, "SNTP sync completed successfully");
-    }
-
-    
+    // if (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED) {
+    //     ESP_LOGW(TAG, "SNTP sync failed after %d retries", retry_count);
+    // } else {
+    //     ESP_LOGI(TAG, "SNTP sync completed successfully");
+    // }
 }
 
 void func(void)
